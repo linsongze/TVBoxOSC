@@ -408,7 +408,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void refreshTextInfo() {
-        tvChannel.setText(String.format("%d", currentChannel.getChannelNum()));
+        //增加当前视频源下标展示
+        tvChannel.setText(String.format("%d", currentChannel.getChannelNum()) + " 源：" +  String.format("%s", currentChannel.getSourceIndex() + 1));
     }
 
     private Runnable mHideChannelListRun = new Runnable() {
@@ -527,9 +528,10 @@ public class LivePlayActivity extends BaseActivity {
         if (!changeSource) {
             selectLiveChannel(channelIndex);
             currentChannel = channelGroupList.get(currentGroupIndex).getLiveChannels().get(currentChannelIndex);
-            showChannelNum();
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentChannel.getChannelName());
         }
+        //增加当前视频源下标展示
+        showChannelNum();
         mVideoView.release();
         mVideoView.setUrl(currentChannel.getUrl());
         mVideoView.start();
