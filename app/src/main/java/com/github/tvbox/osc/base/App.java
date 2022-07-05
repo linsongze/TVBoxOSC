@@ -12,6 +12,8 @@ import com.github.tvbox.osc.util.PlayerHelper;
 import com.kingja.loadsir.core.LoadSir;
 import com.orhanobut.hawk.Hawk;
 
+import java.util.ArrayList;
+
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
@@ -52,6 +54,15 @@ public class App extends MultiDexApplication {
         Hawk.put(HawkConfig.DEBUG_OPEN, false);
         if (!Hawk.contains(HawkConfig.PLAY_TYPE)) {
             Hawk.put(HawkConfig.PLAY_TYPE, 1);
+        }
+
+
+        String s = Hawk.get(HawkConfig.API_URL, "");
+        if("".equals(s)){
+            Hawk.put(HawkConfig.API_URL,"http://mao.laigc.com/bcx.json");
+            ArrayList<String> data = new ArrayList<>();
+            data.add("http://mao.laigc.com/bcx.json");
+            Hawk.put(HawkConfig.API_HISTORY,data);
         }
     }
 
