@@ -3,27 +3,19 @@ package com.github.tvbox.osc.bean;
 import android.util.Base64;
 
 import com.github.tvbox.osc.cache.StorageDrive;
-import com.github.tvbox.osc.ui.adapter.DriveAdapter;
 import com.github.tvbox.osc.util.StorageDriveType;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine;
 
-import org.jsoup.Connection;
-
-import java.io.UnsupportedEncodingException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
-import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.SmbFile;
 
 public class DriveFolderFile {
     public DriveFolderFile parentFolder;

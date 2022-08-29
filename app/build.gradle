@@ -59,15 +59,20 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/NOTICE.md'
+    }
+
 }
 
 dependencies {
-    api fileTree(dir: "libs", include: ["*.jar"])
+    api fileTree(dir: "libs", include: ["*.jar","*.aar"])
 
     // for WebDAV
-    implementation ('com.github.thegrizzlylabs:sardine-android:0.5') {
-        exclude group: 'com.squareup.okhttp3'
-    }
+//    implementation ('com.github.thegrizzlylabs:sardine-android:0.5') {
+//        exclude group: 'com.squareup.okhttp3'
+//    }
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -76,6 +81,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation files('libs\\thunder.jar')
+    implementation project(path: ':sardine-android')
 
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
     implementation 'androidx.room:room-runtime:2.3.0'
@@ -95,9 +101,10 @@ dependencies {
 
     implementation project(":player")
 
-    implementation('org.xwalk:xwalk_shared_library:23.53.589.4') {
-        exclude group: 'com.android.support'
-    }
+//    implementation('org.xwalk:xwalk_shared_library:23.53.589.4') {
+//        exclude group: 'com.android.support'
+//
+//    }
     implementation 'com.lzy.net:okgo:3.0.4'
     // implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
     implementation 'com.owen:tv-recyclerview:3.0.0'
@@ -112,4 +119,6 @@ dependencies {
             exclude group: 'xpp3', module: 'xpp3'
         }
     }
+
+
 }
