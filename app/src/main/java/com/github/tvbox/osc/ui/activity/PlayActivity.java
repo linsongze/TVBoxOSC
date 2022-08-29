@@ -46,6 +46,7 @@ import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.player.controller.VodController;
 import com.github.tvbox.osc.player.thirdparty.MXPlayer;
 import com.github.tvbox.osc.player.thirdparty.ReexPlayer;
+import com.github.tvbox.osc.player.thirdparty.Kodi;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -175,7 +176,8 @@ public class PlayActivity extends BaseActivity {
                 } else {
                     String preProgressKey = progressKey;
                     PlayActivity.this.playNext();
-                    if (rmProgress && preProgressKey != null) CacheManager.delete(MD5.string2MD5(preProgressKey), 0);
+                    if (rmProgress && preProgressKey != null)
+                        CacheManager.delete(MD5.string2MD5(preProgressKey), 0);
                 }
             }
 
@@ -274,6 +276,11 @@ public class PlayActivity extends BaseActivity {
                                         callResult = ReexPlayer.run(PlayActivity.this, url, playTitle, playSubtitle, headers);
                                         break;
                                     }
+                                    case 12: {
+                                        extPlay = true;
+                                        callResult = Kodi.run(PlayActivity.this, url, playTitle, playSubtitle, headers);
+                                        break;
+                                    }
                                 }
                                 setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
                                 return;
@@ -312,6 +319,7 @@ public class PlayActivity extends BaseActivity {
                         String flag = info.optString("flag");
                         String url = info.getString("url");
                         HashMap<String, String> headers = null;
+                        webUserAgent = null;
                         if (info.has("header")) {
                             try {
                                 JSONObject hds = new JSONObject(info.getString("header"));
@@ -322,6 +330,9 @@ public class PlayActivity extends BaseActivity {
                                         headers = new HashMap<>();
                                     }
                                     headers.put(key, hds.getString(key));
+                                    if (key.equalsIgnoreCase("user-agent")) {
+                                        webUserAgent = hds.getString(key).trim();
+                                    }
                                 }
                             } catch (Throwable th) {
 
@@ -392,11 +403,13 @@ public class PlayActivity extends BaseActivity {
 
     // takagen99 : Add check for external players not enter PIP
     private boolean extPlay = false;
+
     public boolean supportsPiPMode() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
+
     @Override
-    public void onUserLeaveHint () {
+    public void onUserLeaveHint() {
         if (supportsPiPMode() && !extPlay) {
             enterPictureInPictureMode();
         }
@@ -422,6 +435,7 @@ public class PlayActivity extends BaseActivity {
 
     // takagen99 : Use onStopCalled to track close activity
     private boolean onStopCalled;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -430,6 +444,7 @@ public class PlayActivity extends BaseActivity {
             mVideoView.resume();
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -454,6 +469,7 @@ public class PlayActivity extends BaseActivity {
             }
         }
     }
+
     // takagen99 : PIP fix to close video when close window
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
@@ -489,7 +505,7 @@ public class PlayActivity extends BaseActivity {
         if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
             hasNext = false;
         } else {
-            if (mVodInfo.reverseSort){
+            if (mVodInfo.reverseSort) {
                 hasNext = mVodInfo.playIndex - 1 >= 0;
             } else {
                 hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
@@ -499,7 +515,7 @@ public class PlayActivity extends BaseActivity {
             Toast.makeText(this, "已经是最后一集了!", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (mVodInfo.reverseSort){
+        if (mVodInfo.reverseSort) {
             mVodInfo.playIndex--;
         } else {
             mVodInfo.playIndex++;
@@ -512,7 +528,7 @@ public class PlayActivity extends BaseActivity {
         if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
             hasPre = false;
         } else {
-            if (mVodInfo.reverseSort){
+            if (mVodInfo.reverseSort) {
                 hasPre = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
             } else {
                 hasPre = mVodInfo.playIndex - 1 >= 0;
@@ -522,7 +538,7 @@ public class PlayActivity extends BaseActivity {
             Toast.makeText(this, "已经是第一集了!", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (mVodInfo.reverseSort){
+        if (mVodInfo.reverseSort) {
             mVodInfo.playIndex++;
         } else {
             mVodInfo.playIndex--;
@@ -553,15 +569,17 @@ public class PlayActivity extends BaseActivity {
         playUrl(null, null);
         String progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex;
         //重新播放清除现有进度
-        if (reset) {CacheManager.delete(MD5.string2MD5(progressKey), 0);}
-        if(vs.url.startsWith("tvbox-drive://")) {
+        if (reset) {
+            CacheManager.delete(MD5.string2MD5(progressKey), 0);
+        }
+        if (vs.url.startsWith("tvbox-drive://")) {
             mController.showParse(false);
             HashMap<String, String> headers = null;
-            if(mVodInfo.playerCfg != null && mVodInfo.playerCfg.length() > 0) {
+            if (mVodInfo.playerCfg != null && mVodInfo.playerCfg.length() > 0) {
                 JsonObject playerConfig = JsonParser.parseString(mVodInfo.playerCfg).getAsJsonObject();
-                if(playerConfig.has("headers")) {
+                if (playerConfig.has("headers")) {
                     headers = new HashMap<>();
-                    for (JsonElement headerEl: playerConfig.getAsJsonArray("headers")) {
+                    for (JsonElement headerEl : playerConfig.getAsJsonArray("headers")) {
                         JsonObject headerJson = headerEl.getAsJsonObject();
                         headers.put(headerJson.get("name").getAsString(), headerJson.get("value").getAsString());
                     }
@@ -599,6 +617,7 @@ public class PlayActivity extends BaseActivity {
     private String progressKey;
     private String parseFlag;
     private String webUrl;
+    private String webUserAgent;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
@@ -923,14 +942,22 @@ public class PlayActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // webUserAgent = "Mozilla/5.0 (Linux; Android 6.0.1; Moto G (4)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36";
+                String ua = webUserAgent;
                 if (mXwalkWebView != null) {
                     mXwalkWebView.stopLoading();
-                    mXwalkWebView.clearCache(true);
+                    if(ua != null) {
+                        mXwalkWebView.getSettings().setUserAgentString(ua);
+                    }
+                    //mXwalkWebView.clearCache(true);
                     mXwalkWebView.loadUrl(url);
                 }
                 if (mSysWebView != null) {
                     mSysWebView.stopLoading();
-                    mSysWebView.clearCache(true);
+                    if(ua != null) {
+                        mSysWebView.getSettings().setUserAgentString(ua);
+                    }
+                    //mSysWebView.clearCache(true);
                     mSysWebView.loadUrl(url);
                 }
             }
@@ -946,7 +973,7 @@ public class PlayActivity extends BaseActivity {
                     mXwalkWebView.stopLoading();
                     mXwalkWebView.loadUrl("about:blank");
                     if (destroy) {
-                        mXwalkWebView.clearCache(true);
+                        // mXwalkWebView.clearCache(true);
                         mXwalkWebView.removeAllViews();
                         mXwalkWebView.onDestroy();
                         mXwalkWebView = null;
@@ -956,7 +983,7 @@ public class PlayActivity extends BaseActivity {
                     mSysWebView.stopLoading();
                     mSysWebView.loadUrl("about:blank");
                     if (destroy) {
-                        mSysWebView.clearCache(true);
+                        // mSysWebView.clearCache(true);
                         mSysWebView.removeAllViews();
                         mSysWebView.destroy();
                         mSysWebView = null;
@@ -1052,7 +1079,8 @@ public class PlayActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        // settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         /* 添加webView配置 */
         //设置编码
         settings.setDefaultTextEncodingName("utf-8");
@@ -1212,7 +1240,8 @@ public class PlayActivity extends BaseActivity {
         settings.setLoadWithOverviewMode(true);
         settings.setBuiltInZoomControls(true);
         settings.setSupportZoom(false);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        // settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         // settings.setUserAgentString(ANDROID_UA);
 
         webView.setBackgroundColor(Color.BLACK);

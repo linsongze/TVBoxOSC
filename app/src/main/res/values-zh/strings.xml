@@ -37,7 +37,7 @@
     <string name="det_type">类型</string>
     <string name="det_actor">演员</string>
     <string name="det_dir">导演</string>
-    <string name="det_des">简介</string>
+    <string name="det_des"></string>
 
     // Settings Menu Page //
     <string name="mn_config">配置地址</string>
@@ -104,5 +104,9 @@
     <string name="act_home">首页</string>
     <string name="act_player">播放器</string>
     <string name="act_system">系统</string>
+
+    // Fast Search Page //
+    <string name="fs_show_all">全部显示</string>
+    <string name="fs_results">搜索</string>
 
 </resources>
