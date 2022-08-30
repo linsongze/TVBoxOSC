@@ -1,59 +1,34 @@
 package com.github.tvbox.osc.ui.activity;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.ColorFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.BounceInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.viewpager.widget.ViewPager;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.base.BaseActivity;
-import com.github.tvbox.osc.base.BaseLazyFragment;
-import com.github.tvbox.osc.bean.AbsSortXml;
 import com.github.tvbox.osc.bean.DriveFolderFile;
-import com.github.tvbox.osc.bean.Movie;
-import com.github.tvbox.osc.bean.MovieSort;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.cache.StorageDrive;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.ui.adapter.DriveAdapter;
-import com.github.tvbox.osc.ui.adapter.HomePageAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
-import com.github.tvbox.osc.ui.adapter.SortAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.WebdavDialog;
-import com.github.tvbox.osc.ui.fragment.GridFragment;
-import com.github.tvbox.osc.ui.tv.widget.DefaultTransformer;
-import com.github.tvbox.osc.ui.tv.widget.FixedSpeedScroller;
-import com.github.tvbox.osc.ui.tv.widget.NoScrollViewPager;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.StorageDriveType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -66,15 +41,12 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.thegrizzlylabs.sardineandroid.DavResource;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 
-import org.chromium.ui.widget.ButtonCompat;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,7 +56,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
-import jcifs.smb.SmbFile;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class DriveActivity extends BaseActivity {
@@ -530,8 +501,11 @@ public class DriveActivity extends BaseActivity {
                     List<DriveFolderFile> items = new ArrayList<>();
                     if (files != null) {
                         for (DavResource file : files) {
-                            if (targetPath != null && file.getPath().toUpperCase(Locale.ROOT).endsWith(targetPath.toUpperCase(Locale.ROOT) + "/"))
+                            if(file.getPath().equals("/")){
                                 continue;
+                            }
+//                            if (targetPath != null && file.getPath().toUpperCase(Locale.ROOT).endsWith(targetPath.toUpperCase(Locale.ROOT) + "/"))
+//                                continue;
                             int extNameStartIndex = file.getName().lastIndexOf(".");
                             items.add(new DriveFolderFile(driveNode, file.getName(), !file.isDirectory(),
                                     !file.isDirectory() && extNameStartIndex >= 0 && extNameStartIndex < file.getName().length() ?
