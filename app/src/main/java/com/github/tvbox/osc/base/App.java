@@ -15,7 +15,6 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 
-import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
 
@@ -63,9 +62,9 @@ public class App extends MultiDexApplication {
 
         String s = Hawk.get(HawkConfig.API_URL, "");
         if("".equals(s)){
-            Hawk.put(HawkConfig.API_URL,"http://mao.laigc.com/bcx.json");
+            Hawk.put(HawkConfig.API_URL,"https://d.laigc.com/mao.laigc.com/bcx.json");
             ArrayList<String> data = new ArrayList<>();
-            data.add("http://mao.laigc.com/bcx.json");
+            data.add("https://d.laigc.com/mao.laigc.com/bcx.json");
             Hawk.put(HawkConfig.API_HISTORY,data);
         }
     }
