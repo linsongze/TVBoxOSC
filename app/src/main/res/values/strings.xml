@@ -53,6 +53,7 @@
     <string name="mn_play_decode">Decode</string>
     <string name="mn_search">Search Display</string>
     <string name="mn_ratio">Screen Ratio</string>
+    <string name="mn_pip">PIP</string>
     <string name="mn_preview">Preview Window</string>
     <string name="mn_webview">WebView</string>
     <string name="mn_render">Render</string>
@@ -109,5 +110,9 @@
     // Fast Search Page //
     <string name="fs_show_all">All</string>
     <string name="fs_results">Results</string>
+
+    // VOD //
+    <string name="vod_audio">Select Audio Track</string>
+    <string name="vod_no_audio">No Audio Track</string>
 
 </resources>
